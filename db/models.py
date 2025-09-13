@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from .database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -20,9 +21,9 @@ class Credit(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     issuance_date: Mapped[datetime.date] = mapped_column(Date, server_default=func.current_date())
     return_date: Mapped[datetime.date] = mapped_column(Date)
-    actual_return_date: Mapped[datetime.date] = mapped_column(Date)
-    body: Mapped[int]
-    percent: Mapped[float] = mapped_column(Numeric(3, 2))
+    actual_return_date: Mapped[Optional[datetime.date]] = mapped_column(Date, nullable=True, default=None)
+    body: Mapped[float] = mapped_column(Numeric(10, 2))
+    percent: Mapped[float] = mapped_column(Numeric(10, 2))
 
     user: Mapped[User] = relationship(back_populates="credits", lazy="joined")
     payments: Mapped[list["Payment"]] = relationship(back_populates="credit", cascade="all, delete-orphan", lazy="joined")
@@ -37,7 +38,7 @@ class Term(Base):
 class Payment(Base):
     __tablename__ = "payments"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    sum: Mapped[int]
+    sum: Mapped[float] = mapped_column(Numeric(10, 2))
     payment_date: Mapped[datetime.date] = mapped_column(Date, server_default=func.current_date())
     credit_id: Mapped[int] = mapped_column(ForeignKey("credits.id"))
     type_id: Mapped[int] = mapped_column(ForeignKey("dictionary.id"))
@@ -50,7 +51,7 @@ class Plan(Base):
     __tablename__ = "plans"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     period: Mapped[datetime.date] = mapped_column(Date)
-    sum: Mapped[int]
+    sum: Mapped[float] = mapped_column(Numeric(10, 2))
     category_id: Mapped[int] = mapped_column(ForeignKey("dictionary.id"))
 
     category: Mapped[Term] = relationship(lazy="joined")

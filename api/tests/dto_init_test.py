@@ -1,6 +1,6 @@
 import datetime
 
-from ..schemas import UserDTO, CreditDTO
+from ..schemas.models_dto import UserDTO, CreditDTO
 
 
 def test_user():

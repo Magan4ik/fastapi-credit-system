@@ -2,7 +2,7 @@ import datetime
 
 from pydantic import BaseModel, Field, AfterValidator
 from typing import Annotated, Optional
-from . import validators
+from api import validators
 
 from db.models import User, Credit, Plan, Payment, Term
 
@@ -22,6 +22,9 @@ class CreditDTO(BaseModel):
     actual_return_date: Optional[datetime.date]
     body: float
     percent: float
+
+    class Config:
+        from_attributes = True
 
     def to_orm(self):
         return Credit(**self.model_dump())

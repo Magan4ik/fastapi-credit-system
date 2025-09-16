@@ -4,7 +4,7 @@ from db.parsers.importers import ModelImporter
 
 from db.database import async_session
 import asyncio
-from api.schemas import UserDTO, CreditDTO, PlanDTO, PaymentDTO, TermDTO
+from api.schemas.models_dto import UserDTO, CreditDTO, PlanDTO, PaymentDTO, TermDTO
 
 
 async def main():

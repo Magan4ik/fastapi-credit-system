@@ -1,5 +1,5 @@
 from .readers import CSVReader
-from api.schemas import UserDTO, CreditDTO, PlanDTO, PaymentDTO, TermDTO
+from api.schemas.models_dto import UserDTO, CreditDTO, PlanDTO, PaymentDTO, TermDTO
 from .parsers import UniversalParser
 
 from sqlalchemy.ext.asyncio import AsyncSession

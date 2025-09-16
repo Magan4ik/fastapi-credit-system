@@ -1,4 +1,3 @@
-import datetime
 from abc import ABC, abstractmethod
 from typing import Type
 import re
@@ -7,7 +6,10 @@ import pandas as pd
 from pandas import DataFrame
 from pydantic import BaseModel
 
+from db.parsers.converters import Converter
 from .readers import AbstractReader
+
+from api.schemas.models_dto import UserDTO, CreditDTO, PlanDTO, PaymentDTO, TermDTO
 
 
 class AbstractParser(ABC):
@@ -22,13 +24,14 @@ class AbstractParser(ABC):
 
 class UniversalParser(AbstractParser):
 
-    def __init__(self, reader: AbstractReader, dto_model: Type[BaseModel]):
+    def __init__(self, reader: AbstractReader, dto_model: Type[BaseModel], *converters: Converter):
         super().__init__(reader)
         self.model = dto_model
+        self.converters = converters
 
     def parse(self, file) -> list[BaseModel]:
         df = self.reader.read(file)
-        df = self.validate_dataframe(df)
+        df = self._validate_dataframe(df)
 
         dtos = list()
         for record in df.to_dict(orient="records"):
@@ -37,9 +40,14 @@ class UniversalParser(AbstractParser):
 
         return dtos
 
-    def validate_dataframe(self, df: DataFrame) -> DataFrame:
+    def _validate_dataframe(self, df: DataFrame) -> DataFrame:
         for col in df.columns:
             if col == "id": continue
+
+            for converter in self.converters:
+                if col == converter.file_field_name:
+                    df[converter.model_field_name] = df[col].apply(converter.convert)
+                    col = converter.model_field_name
 
             assert col in self.model.model_fields, f"Unexpected field: {col}"
 
@@ -54,9 +62,20 @@ class UniversalParser(AbstractParser):
         return df
 
 
+class PlanInsertParser(AbstractParser):
+
+    def parse(self, file) -> list[BaseModel]:
+        df = self.reader.read(file)
+        dtos = list()
+        for record in df.to_dict(orient="records"):
+            dto = PlanDTO(**record)
+            dtos.append(dto)
+
+        return dtos
+
+
 if __name__ == "__main__":
     from readers import CSVReader
-    from api.schemas import UserDTO, CreditDTO, PlanDTO, PaymentDTO, TermDTO
 
     parse_mf = {
         UserDTO: "test_dataset/users.csv",

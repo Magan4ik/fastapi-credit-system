@@ -5,13 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.schemas.models_dto import PlanDTO
 from api.schemas.responses import PlanPerformanceResponse, MonthPerformanceResponse
+from api.services.base_service import BaseDBService
 from db.models import Plan
 
 
-class PlanService:
-
-    def __init__(self, session: AsyncSession):
-        self._session = session
+class PlanService(BaseDBService):
 
     async def get_plan_performance(self, date: datetime.date, credits_sum: float, payments_sum: float) -> list[PlanPerformanceResponse]:
         plans = await self.get_plan_by_month(date)

@@ -4,15 +4,14 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 
+from api.services.base_service import BaseDBService
 from db.models import Credit, Payment
 from api.schemas.responses import ClosedUserCreditResponse, OpenedUserCreditResponse
 from api.schemas.models_dto import CreditDTO
 
 
 # noinspection PyTypeChecker
-class CreditService:
-    def __init__(self, session: AsyncSession):
-        self._session = session
+class CreditService(BaseDBService):
 
     async def collect_credit_info(self, user_id: int) -> list[ClosedUserCreditResponse | OpenedUserCreditResponse]:
         credits = await self.get_user_credit(user_id)

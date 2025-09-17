@@ -1,13 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.services.base_service import BaseDBService
 from db.models import Term
 
 
-class DictionaryService:
-
-    def __init__(self, session: AsyncSession):
-        self._session = session
+class DictionaryService(BaseDBService):
 
     async def get_all_terms(self):
         stmt = select(Term)

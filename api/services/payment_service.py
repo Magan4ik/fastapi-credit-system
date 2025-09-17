@@ -5,14 +5,12 @@ from abc import ABC, abstractmethod
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.services.base_service import BaseDBService
 from db.models import Payment
 
 
 # noinspection PyTypeChecker
-class PaymentService:
-
-    def __init__(self, session: AsyncSession):
-        self._session = session
+class PaymentService(BaseDBService):
 
     async def get_payments_in_range(self, start_date: datetime.date, end_date: datetime.date) -> list[Payment]:
         stmt = select(Payment).where(and_(

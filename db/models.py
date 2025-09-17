@@ -55,3 +55,13 @@ class Plan(Base):
     category_id: Mapped[int] = mapped_column(ForeignKey("dictionary.id"))
 
     category: Mapped[Term] = relationship(lazy="joined")
+
+
+# В структурі таблиці Users в ТЗ не вказано поле пароля. Так само його немає в тестових даних.
+# Але JWT авторизацію без пароля робити небезпечно. Я висунув припущення, що users це клієнти, а не безпосередньо користувачі.
+# Тому ця модель (Admin) має відображати адміністратора, який має доступ до операцій з кредитами, платежами та планами.
+class Admin(Base):
+    __tablename__ = "admins"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String(255), unique=True)
+    password: Mapped[str] = mapped_column(String(255))

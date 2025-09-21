@@ -30,6 +30,10 @@ services:
       - "8000:8000"
     command: >
       sh -c "
+        until mysqladmin ping -h db -uapp_user -papp_password --silent; do
+          echo 'Waiting for MySQL...';
+          sleep 2;
+        done &&
         alembic upgrade head &&
         python -c 'import os; import pathlib; flag = pathlib.Path(\"/app/.imported\"); import sys; sys.exit(0) if flag.exists() else None' ||
         (python import_db.py && touch /app/.imported) &&

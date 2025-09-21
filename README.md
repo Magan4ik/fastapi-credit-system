@@ -21,8 +21,11 @@ A modern FastAPI-based backend template for a credit management system, using My
     cd fastapi-credit-system
     ```
 
-2. **Make sure `wait-for-it.sh` is executable**
-3. 
+2. **Create `.env` file**
+   For example, use `.env.sample`
+
+3. **Make sure `wait-for-it.sh` is executable**
+   
     ```sh
     chmod +x wait-for-it.sh
     ```
